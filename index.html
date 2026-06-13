@@ -1,394 +1,526 @@
-import { useState, useEffect, useRef } from "react";
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>جدول مباريات كأس العالم 2026</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    /* ─── BASE STYLES ────────────────────────────────────────────────── */
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 40%, #0a1628 70%, #0d2010 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      position: relative;
+      overflow-x: hidden;
+      color: #f0f0f0;
+    }
 
-// ─── DATA ────────────────────────────────────────────────────────────────────
-const round1 = [
-  { g:"A", t1:"🇲🇽 المكسيك",       score:"2 - 0", t2:"جنوب أفريقيا 🇿🇦", date:"الخميس 11 يونيو",  time:"10:00 م", ksa:false, done:true  },
-  { g:"A", t1:"🇰🇷 كوريا الجنوبية",score:"2 - 1", t2:"تشيكيا 🇨🇿",        date:"الجمعة 12 يونيو",  time:"05:00 ص", ksa:false, done:true  },
-  { g:"B", t1:"🇨🇦 كندا",           score:"vs",    t2:"البوسنة 🇧🇦",        date:"الجمعة 12 يونيو",  time:"10:00 م", ksa:false, done:false },
-  { g:"D", t1:"🇺🇸 أمريكا",         score:"vs",    t2:"باراغواي 🇵🇾",       date:"السبت 13 يونيو",   time:"04:00 ص", ksa:false, done:false },
-  { g:"B", t1:"🇶🇦 قطر",            score:"vs",    t2:"سويسرا 🇨🇭",         date:"السبت 13 يونيو",   time:"10:00 م", ksa:false, done:false },
-  { g:"C", t1:"🇧🇷 البرازيل",       score:"vs",    t2:"المغرب 🇲🇦",         date:"الأحد 14 يونيو",   time:"01:00 ص", ksa:false, done:false },
-  { g:"C", t1:"🇭🇹 هايتي",          score:"vs",    t2:"اسكتلندا 🏴󠁧󠁢󠁳󠁣󠁴󠁿",     date:"الأحد 14 يونيو",   time:"04:00 ص", ksa:false, done:false },
-  { g:"D", t1:"🇦🇺 أستراليا",       score:"vs",    t2:"تركيا 🇹🇷",          date:"الأحد 14 يونيو",   time:"07:00 م", ksa:false, done:false },
-  { g:"E", t1:"🇩🇪 ألمانيا",        score:"vs",    t2:"كوراساو 🇨🇼",        date:"الأحد 14 يونيو",   time:"08:00 م", ksa:false, done:false },
-  { g:"F", t1:"🇳🇱 هولندا",         score:"vs",    t2:"اليابان 🇯🇵",        date:"الأحد 14 يونيو",   time:"11:00 م", ksa:false, done:false },
-  { g:"E", t1:"🇨🇮 كوت ديفوار",    score:"vs",    t2:"الإكوادور 🇪🇨",      date:"الاثنين 15 يونيو", time:"02:00 ص", ksa:false, done:false },
-  { g:"F", t1:"🇸🇪 السويد",         score:"vs",    t2:"تونس 🇹🇳",           date:"الاثنين 15 يونيو", time:"05:00 ص", ksa:false, done:false },
-  { g:"H", t1:"🇪🇸 إسبانيا",        score:"vs",    t2:"الرأس الأخضر 🇨🇻",  date:"الاثنين 15 يونيو", time:"07:00 م", ksa:false, done:false },
-  { g:"G", t1:"🇧🇪 بلجيكا",         score:"vs",    t2:"مصر 🇪🇬",            date:"الاثنين 15 يونيو", time:"10:00 م", ksa:false, done:false },
-  { g:"H", t1:"🇸🇦 السعودية",       score:"vs",    t2:"أوروغواي 🇺🇾",       date:"الثلاثاء 16 يونيو",time:"01:00 ص", ksa:true,  done:false },
-  { g:"G", t1:"🇮🇷 إيران",          score:"vs",    t2:"نيوزيلندا 🇳🇿",      date:"الثلاثاء 16 يونيو",time:"04:00 ص", ksa:false, done:false },
-  { g:"J", t1:"🇦🇹 النمسا",         score:"vs",    t2:"الأردن 🇯🇴",         date:"الثلاثاء 16 يونيو",time:"07:00 م", ksa:false, done:false },
-  { g:"I", t1:"🇫🇷 فرنسا",          score:"vs",    t2:"السنغال 🇸🇳",        date:"الثلاثاء 16 يونيو",time:"10:00 م", ksa:false, done:false },
-  { g:"I", t1:"🇮🇶 العراق",         score:"vs",    t2:"النرويج 🇳🇴",        date:"الأربعاء 17 يونيو",time:"01:00 ص", ksa:false, done:false },
-  { g:"J", t1:"🇦🇷 الأرجنتين",      score:"vs",    t2:"الجزائر 🇩🇿",        date:"الأربعاء 17 يونيو",time:"04:00 ص", ksa:false, done:false },
-  { g:"K", t1:"🇵🇹 البرتغال",       score:"vs",    t2:"الكونغو 🇨🇩",        date:"الأربعاء 17 يونيو",time:"08:00 م", ksa:false, done:false },
-  { g:"L", t1:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 إنجلترا",      score:"vs",    t2:"كرواتيا 🇭🇷",        date:"الأربعاء 17 يونيو",time:"11:00 م", ksa:false, done:false },
-  { g:"L", t1:"🇬🇭 غانا",           score:"vs",    t2:"بنما 🇵🇦",           date:"الخميس 18 يونيو",  time:"02:00 ص", ksa:false, done:false },
-  { g:"K", t1:"🇺🇿 أوزبكستان",      score:"vs",    t2:"كولومبيا 🇨🇴",       date:"الخميس 18 يونيو",  time:"05:00 ص", ksa:false, done:false },
-];
+    /* ─── ANIMATED BACKGROUND ────────────────────────────────────────── */
+    #starfield {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-const round2 = [
-  { g:"A", t1:"🇨🇿 تشيكيا",         score:"vs", t2:"جنوب أفريقيا 🇿🇦",  date:"الخميس 18 يونيو",   time:"07:00 م", ksa:false },
-  { g:"B", t1:"🇨🇭 سويسرا",          score:"vs", t2:"البوسنة 🇧🇦",        date:"الخميس 18 يونيو",   time:"10:00 م", ksa:false },
-  { g:"B", t1:"🇨🇦 كندا",            score:"vs", t2:"قطر 🇶🇦",            date:"الجمعة 19 يونيو",   time:"01:00 ص", ksa:false },
-  { g:"A", t1:"🇲🇽 المكسيك",         score:"vs", t2:"كوريا الجنوبية 🇰🇷", date:"الجمعة 19 يونيو",   time:"04:00 ص", ksa:false },
-  { g:"D", t1:"🇺🇸 أمريكا",          score:"vs", t2:"أستراليا 🇦🇺",       date:"الجمعة 19 يونيو",   time:"10:00 م", ksa:false },
-  { g:"C", t1:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 اسكتلندا",     score:"vs", t2:"المغرب 🇲🇦",         date:"السبت 20 يونيو",    time:"01:00 ص", ksa:false },
-  { g:"C", t1:"🇧🇷 البرازيل",         score:"vs", t2:"هايتي 🇭🇹",          date:"السبت 20 يونيو",    time:"04:00 ص", ksa:false },
-  { g:"E", t1:"🇨🇼 كوراساو",          score:"vs", t2:"كوت ديفوار 🇨🇮",     date:"السبت 20 يونيو",    time:"08:00 م", ksa:false },
-  { g:"F", t1:"🇯🇵 اليابان",          score:"vs", t2:"السويد 🇸🇪",         date:"السبت 20 يونيو",    time:"11:00 م", ksa:false },
-  { g:"D", t1:"🇹🇷 تركيا",            score:"vs", t2:"باراغواي 🇵🇾",       date:"الأحد 21 يونيو",    time:"01:00 ص", ksa:false },
-  { g:"E", t1:"🇩🇪 ألمانيا",          score:"vs", t2:"الإكوادور 🇪🇨",      date:"الأحد 21 يونيو",    time:"02:00 ص", ksa:false },
-  { g:"F", t1:"🇹🇳 تونس",             score:"vs", t2:"هولندا 🇳🇱",         date:"الأحد 21 يونيو",    time:"05:00 ص", ksa:false },
-  { g:"H", t1:"🇪🇸 إسبانيا",          score:"vs", t2:"السعودية 🇸🇦",       date:"الأحد 21 يونيو",    time:"07:00 م", ksa:true  },
-  { g:"G", t1:"🇧🇪 بلجيكا",           score:"vs", t2:"إيران 🇮🇷",          date:"الأحد 21 يونيو",    time:"10:00 م", ksa:false },
-  { g:"H", t1:"🇺🇾 أوروغواي",         score:"vs", t2:"الرأس الأخضر 🇨🇻",  date:"الاثنين 22 يونيو",  time:"01:00 ص", ksa:false },
-  { g:"G", t1:"🇳🇿 نيوزيلندا",        score:"vs", t2:"مصر 🇪🇬",            date:"الاثنين 22 يونيو",  time:"04:00 ص", ksa:false },
-  { g:"J", t1:"🇦🇷 الأرجنتين",        score:"vs", t2:"النمسا 🇦🇹",         date:"الاثنين 22 يونيو",  time:"08:00 م", ksa:false },
-  { g:"I", t1:"🇫🇷 فرنسا",            score:"vs", t2:"العراق 🇮🇶",         date:"الاثنين 22 يونيو",  time:"11:00 م", ksa:false },
-  { g:"J", t1:"🇯🇴 الأردن",           score:"vs", t2:"الجزائر 🇩🇿",        date:"الثلاثاء 23 يونيو", time:"02:00 ص", ksa:false },
-  { g:"I", t1:"🇳🇴 النرويج",          score:"vs", t2:"السنغال 🇸🇳",        date:"الثلاثاء 23 يونيو", time:"05:00 ص", ksa:false },
-  { g:"K", t1:"🇵🇹 البرتغال",         score:"vs", t2:"أوزبكستان 🇺🇿",      date:"الثلاثاء 23 يونيو", time:"08:00 م", ksa:false },
-  { g:"L", t1:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 إنجلترا",      score:"vs", t2:"غانا 🇬🇭",           date:"الثلاثاء 23 يونيو", time:"11:00 م", ksa:false },
-  { g:"L", t1:"🇵🇦 بنما",             score:"vs", t2:"كرواتيا 🇭🇷",        date:"الأربعاء 24 يونيو", time:"02:00 ص", ksa:false },
-  { g:"K", t1:"🇨🇩 الكونغو",          score:"vs", t2:"كولومبيا 🇨🇴",       date:"الأربعاء 24 يونيو", time:"05:00 ص", ksa:false },
-];
+    /* Glow blobs */
+    .glow-top {
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0,150,50,0.12), transparent 70%);
+      pointer-events: none;
+    }
+    .glow-bottom {
+      position: absolute;
+      bottom: -100px;
+      left: -100px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(212,175,55,0.08), transparent 70%);
+      pointer-events: none;
+    }
 
-const round3 = [
-  { g:"A", t1:"🇿🇦 جنوب أفريقيا",  score:"vs", t2:"كوريا الجنوبية 🇰🇷", date:"الأربعاء 24 يونيو", time:"07:00 م", ksa:false },
-  { g:"A", t1:"🇨🇿 تشيكيا",         score:"vs", t2:"المكسيك 🇲🇽",         date:"الأربعاء 24 يونيو", time:"07:00 م", ksa:false },
-  { g:"B", t1:"🇶🇦 قطر",            score:"vs", t2:"البوسنة 🇧🇦",         date:"الخميس 25 يونيو",  time:"12:00 ص", ksa:false },
-  { g:"B", t1:"🇨🇭 سويسرا",          score:"vs", t2:"كندا 🇨🇦",            date:"الخميس 25 يونيو",  time:"12:00 ص", ksa:false },
-  { g:"C", t1:"🇭🇹 هايتي",           score:"vs", t2:"البرازيل 🇧🇷",        date:"الخميس 25 يونيو",  time:"07:00 م", ksa:false },
-  { g:"C", t1:"🇲🇦 المغرب",          score:"vs", t2:"اسكتلندا 🏴󠁧󠁢󠁳󠁣󠁴󠁿",     date:"الخميس 25 يونيو",  time:"07:00 م", ksa:false },
-  { g:"D", t1:"🇵🇾 باراغواي",        score:"vs", t2:"أستراليا 🇦🇺",        date:"الجمعة 26 يونيو",  time:"12:00 ص", ksa:false },
-  { g:"D", t1:"🇹🇷 تركيا",           score:"vs", t2:"أمريكا 🇺🇸",          date:"الجمعة 26 يونيو",  time:"12:00 ص", ksa:false },
-  { g:"E", t1:"🇪🇨 الإكوادور",       score:"vs", t2:"كوراساو 🇨🇼",         date:"الجمعة 26 يونيو",  time:"07:00 م", ksa:false },
-  { g:"E", t1:"🇨🇮 كوت ديفوار",     score:"vs", t2:"ألمانيا 🇩🇪",         date:"الجمعة 26 يونيو",  time:"07:00 م", ksa:false },
-  { g:"F", t1:"🇸🇪 السويد",          score:"vs", t2:"هولندا 🇳🇱",          date:"السبت 27 يونيو",   time:"12:00 ص", ksa:false },
-  { g:"F", t1:"🇯🇵 اليابان",          score:"vs", t2:"تونس 🇹🇳",            date:"السبت 27 يونيو",   time:"12:00 ص", ksa:false },
-  { g:"G", t1:"🇪🇬 مصر",             score:"vs", t2:"إيران 🇮🇷",           date:"السبت 27 يونيو",   time:"07:00 م", ksa:false },
-  { g:"G", t1:"🇳🇿 نيوزيلندا",       score:"vs", t2:"بلجيكا 🇧🇪",          date:"السبت 27 يونيو",   time:"07:00 م", ksa:false },
-  { g:"H", t1:"🇨🇻 الرأس الأخضر",   score:"vs", t2:"السعودية 🇸🇦",        date:"الأحد 28 يونيو",   time:"12:00 ص", ksa:true  },
-  { g:"H", t1:"🇺🇾 أوروغواي",        score:"vs", t2:"إسبانيا 🇪🇸",         date:"الأحد 28 يونيو",   time:"12:00 ص", ksa:false },
-  { g:"I", t1:"🇸🇳 السنغال",         score:"vs", t2:"العراق 🇮🇶",          date:"الأحد 28 يونيو",   time:"07:00 م", ksa:false },
-  { g:"I", t1:"🇳🇴 النرويج",         score:"vs", t2:"فرنسا 🇫🇷",           date:"الأحد 28 يونيو",   time:"07:00 م", ksa:false },
-  { g:"J", t1:"🇩🇿 الجزائر",         score:"vs", t2:"النمسا 🇦🇹",          date:"الاثنين 29 يونيو", time:"12:00 ص", ksa:false },
-  { g:"J", t1:"🇯🇴 الأردن",          score:"vs", t2:"الأرجنتين 🇦🇷",       date:"الاثنين 29 يونيو", time:"12:00 ص", ksa:false },
-  { g:"K", t1:"🇨🇴 كولومبيا",        score:"vs", t2:"البرتغال 🇵🇹",        date:"الاثنين 29 يونيو", time:"07:00 م", ksa:false },
-  { g:"K", t1:"🇨🇩 الكونغو",         score:"vs", t2:"أوزبكستان 🇺🇿",       date:"الاثنين 29 يونيو", time:"07:00 م", ksa:false },
-  { g:"L", t1:"🇭🇷 كرواتيا",         score:"vs", t2:"غانا 🇬🇭",            date:"الثلاثاء 30 يونيو",time:"12:00 ص", ksa:false },
-  { g:"L", t1:"🇵🇦 بنما",            score:"vs", t2:"إنجلترا 🏴󠁧󠁢󠁥󠁮󠁧󠁿",      date:"الثلاثاء 30 يونيو",time:"12:00 ص", ksa:false },
-];
+    /* ─── CONTAINER ─── */
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
 
-const ROUNDS = [
-  { id:1, label:"الجولة الأولى",  dates:"11 – 18 يونيو",  data:round1 },
-  { id:2, label:"الجولة الثانية", dates:"18 – 24 يونيو",  data:round2 },
-  { id:3, label:"الجولة الثالثة",dates:"24 – 30 يونيو",  data:round3 },
-];
+    /* ─── HEADER ─── */
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(212,175,55,0.1);
+      border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 20px;
+      padding: 4px 16px;
+      fontSize: 11px;
+      color: #d4af37;
+      letter-spacing: 3px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .title {
+      margin: 0;
+      font-size: clamp(22px, 5vw, 38px);
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff 30%, #d4af37 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
+    }
+    .subtitle {
+      margin: 6px 0 0;
+      color: rgba(255,255,255,0.45);
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+    .ksa-legend {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      background: rgba(74,222,128,0.1);
+      border: 1px solid rgba(74,222,128,0.3);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 11px;
+      color: #4ade80;
+    }
 
-// ─── ANIMATED BACKGROUND ────────────────────────────────────────────────────
-function StarField() {
-  const canvasRef = useRef(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    let raf;
-    const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
-    resize();
-    window.addEventListener("resize", resize);
+    /* ─── TABS ─── */
+    .tabs-container {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .tab-button {
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+      outline: none;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+    }
+    .tab-button.active {
+      border: 1px solid rgba(212,175,55,0.6);
+      background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(212,175,55,0.1));
+      color: #d4af37;
+      font-weight: 700;
+    }
+    .tab-dates {
+      font-size: 10px;
+      margin-top: 2px;
+      opacity: 0.7;
+    }
 
-    const particles = Array.from({length:80}, () => ({
-      x: Math.random(),
-      y: Math.random(),
-      r: Math.random() * 1.5 + 0.3,
-      speed: Math.random() * 0.0002 + 0.00005,
-      alpha: Math.random() * 0.5 + 0.2,
-      phase: Math.random() * Math.PI * 2,
-    }));
+    /* ─── CARD ─── */
+    .round-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .card-header {
+      padding: 14px 18px;
+      background: linear-gradient(90deg, rgba(0,80,0,0.4), rgba(212,175,55,0.1));
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .card-dates {
+      margin-right: 10px;
+      font-size: 12px;
+      color: rgba(212,175,55,0.8);
+    }
+    .match-count {
+      background: rgba(212,175,55,0.15);
+      border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 11px;
+      color: #d4af37;
+    }
 
-    const draw = (t) => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        const a = p.alpha * (0.6 + 0.4 * Math.sin(t * 0.001 + p.phase));
-        ctx.beginPath();
-        ctx.arc(p.x * canvas.width, p.y * canvas.height, p.r, 0, Math.PI*2);
-        ctx.fillStyle = `rgba(255,215,100,${a})`;
-        ctx.fill();
-      });
-      raf = requestAnimationFrame(draw);
-    };
-    raf = requestAnimationFrame(draw);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
-  }, []);
-  return <canvas ref={canvasRef} style={{position:"absolute",inset:0,width:"100%",height:"100%",pointerEvents:"none"}} />;
-}
+    /* ─── TABLE STYLE ─── */
+    .table-body {
+      padding: 12px 8px;
+    }
+    .grid-row {
+      display: grid;
+      grid-template-columns: 40px 1fr 90px 1fr 130px 70px;
+      align-items: center;
+      gap: 4px;
+    }
 
-// ─── MATCH ROW ───────────────────────────────────────────────────────────────
-function MatchRow({ m, idx }) {
-  const even = idx % 2 === 0;
-  const baseBg = m.ksa
-    ? "linear-gradient(90deg,rgba(0,100,0,0.55),rgba(0,80,0,0.35))"
-    : even
-    ? "rgba(255,255,255,0.04)"
-    : "rgba(255,255,255,0.015)";
+    /* Header Row */
+    .table-header {
+      padding: 6px 14px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid rgba(212,175,55,0.3);
+    }
+    .th-cell {
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(212,175,55,0.8);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-  return (
-    <div style={{
-      display:"grid",
-      gridTemplateColumns:"40px 1fr 90px 1fr 130px 70px",
-      alignItems:"center",
-      gap:4,
-      padding:"8px 14px",
-      background: baseBg,
-      borderLeft: m.ksa ? "3px solid #4ade80" : "3px solid transparent",
-      borderRadius:6,
-      marginBottom:2,
-      direction:"rtl",
-      position:"relative",
-      overflow:"hidden",
-    }}>
-      {m.ksa && (
-        <div style={{
-          position:"absolute", inset:0,
-          background:"linear-gradient(90deg,rgba(74,222,128,0.08),transparent)",
-          pointerEvents:"none",
-        }} />
-      )}
+    /* Match Row */
+    .match-row {
+      padding: 8px 14px;
+      border-left: 3px solid transparent;
+      border-radius: 6px;
+      margin-bottom: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+    .match-row.ksa-row {
+      background: linear-gradient(90deg, rgba(0,100,0,0.55), rgba(0,80,0,0.35)) !important;
+      border-left: 3px solid #4ade80;
+    }
+    .match-row.even-row {
+      background: rgba(255,255,255,0.04);
+    }
+    .match-row.odd-row {
+      background: rgba(255,255,255,0.015);
+    }
+    .ksa-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(74,222,128,0.08), transparent);
+      pointer-events: none;
+    }
 
-      {/* Group badge */}
-      <div style={{
-        background:"rgba(212,175,55,0.2)",
-        border:"1px solid rgba(212,175,55,0.5)",
-        borderRadius:4,
-        textAlign:"center",
-        fontSize:11,
-        fontWeight:700,
-        color:"#d4af37",
-        padding:"2px 0",
-        letterSpacing:1,
-      }}>{m.g}</div>
+    /* Cells */
+    .cell-group {
+      background: rgba(212,175,55,0.2);
+      border: 1px solid rgba(212,175,55,0.5);
+      border-radius: 4px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #d4af37;
+      padding: 2px 0;
+      letter-spacing: 1px;
+    }
+    .cell-t1 { font-size: 13px; color: #f0f0f0; text-align: right; }
+    .cell-t2 { font-size: 13px; color: #f0f0f0; text-align: left; }
+    .font-bold { font-weight: 700; }
 
-      {/* Team 1 */}
-      <div style={{fontSize:13,color:"#f0f0f0",textAlign:"right",fontWeight: m.ksa?"700":"400"}}>{m.t1}</div>
+    .cell-score {
+      text-align: center;
+      font-weight: 700;
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 1px;
+      border-radius: 4px;
+      padding: 2px 4px;
+    }
+    .cell-score.done {
+      font-size: 15px;
+      color: #f87171;
+      letter-spacing: 2px;
+      background: rgba(248,113,113,0.1);
+    }
 
-      {/* Score / VS */}
-      <div style={{
-        textAlign:"center",
-        fontWeight:700,
-        fontSize: m.done ? 15 : 12,
-        color: m.done ? "#f87171" : "rgba(255,255,255,0.4)",
-        letterSpacing: m.done ? 2 : 1,
-        background: m.done ? "rgba(248,113,113,0.1)" : "transparent",
-        borderRadius:4,
-        padding:"2px 4px",
-      }}>{m.score}</div>
+    .cell-date {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+    }
+    .cell-time {
+      font-size: 13px;
+      font-weight: 700;
+      color: #d4af37;
+      text-align: center;
+      font-family: monospace;
+    }
+    .cell-time.ksa-time {
+      color: #4ade80;
+    }
 
-      {/* Team 2 */}
-      <div style={{fontSize:13,color:"#f0f0f0",textAlign:"left",fontWeight: m.ksa?"700":"400"}}>{m.t2}</div>
+    /* Alignments helpers */
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+    .text-left { text-align: left; }
 
-      {/* Date */}
-      <div style={{fontSize:11,color:"rgba(255,255,255,0.5)",textAlign:"center"}}>{m.date}</div>
+    /* ─── FOOTER ─── */
+    .footer {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 10px;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 1px;
+    }
 
-      {/* Time */}
-      <div style={{
-        fontSize:13,
-        fontWeight:700,
-        color: m.ksa ? "#4ade80" : "#d4af37",
-        textAlign:"center",
-        fontFamily:"monospace",
-      }}>{m.time}</div>
+    /* التجاوب للهواتف الذكية الصغيرة */
+    @media (max-width: 680px) {
+      .grid-row {
+        grid-template-columns: 35px 1fr 70px 1fr;
+        row-gap: 8px;
+      }
+      .table-header { display: none; }
+      .cell-date, .cell-time {
+        grid-column: span 2;
+        background: rgba(255,255,255,0.02);
+        padding: 4px 0;
+        border-radius: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
 
-    </div>
-  );
-}
+  <canvas id="starfield"></canvas>
+  <div class="glow-top"></div>
+  <div class="glow-bottom"></div>
 
-// ─── TABLE HEADER ────────────────────────────────────────────────────────────
-function TableHeader() {
-  return (
-    <div style={{
-      display:"grid",
-      gridTemplateColumns:"40px 1fr 90px 1fr 130px 70px",
-      gap:4,
-      padding:"6px 14px 6px",
-      direction:"rtl",
-      marginBottom:4,
-      borderBottom:"1px solid rgba(212,175,55,0.3)",
-    }}>
-      {["م","الفريق الأول","النتيجة","الفريق الثاني","التاريخ","الوقت"].map((h,i)=>(
-        <div key={i} style={{
-          fontSize:10,
-          fontWeight:600,
-          color:"rgba(212,175,55,0.8)",
-          textAlign: i===0||i===2||i===4||i===5 ? "center" : i===1?"right":"left",
-          letterSpacing:1,
-          textTransform:"uppercase",
-        }}>{h}</div>
-      ))}
-    </div>
-  );
-}
+  <div id="app" class="app-container">
 
-// ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
-export default function App() {
-  const [activeRound, setActiveRound] = useState(1);
-  const round = ROUNDS.find(r => r.id === activeRound);
-
-  return (
-    <div style={{
-      minHeight:"100vh",
-      background:"linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 40%, #0a1628 70%, #0d2010 100%)",
-      fontFamily:"'Segoe UI',Tahoma,sans-serif",
-      position:"relative",
-      overflow:"hidden",
-    }}>
-      <StarField />
-
-      {/* Glow blobs */}
-      <div style={{position:"absolute",top:-200,right:-200,width:600,height:600,
-        background:"radial-gradient(circle,rgba(0,150,50,0.12),transparent 70%)",pointerEvents:"none"}} />
-      <div style={{position:"absolute",bottom:-100,left:-100,width:500,height:500,
-        background:"radial-gradient(circle,rgba(212,175,55,0.08),transparent 70%)",pointerEvents:"none"}} />
-
-      <div style={{position:"relative",zIndex:1,maxWidth:900,margin:"0 auto",padding:"20px 16px"}}>
-
-        {/* ── HEADER ── */}
-        <div style={{textAlign:"center",marginBottom:28}}>
-          <div style={{
-            display:"inline-block",
-            background:"rgba(212,175,55,0.1)",
-            border:"1px solid rgba(212,175,55,0.3)",
-            borderRadius:20,
-            padding:"4px 16px",
-            fontSize:11,
-            color:"#d4af37",
-            letterSpacing:3,
-            marginBottom:10,
-          }}>FIFA WORLD CUP 2026</div>
-
-          <h1 style={{
-            margin:0,
-            fontSize:"clamp(22px,5vw,38px)",
-            fontWeight:900,
-            background:"linear-gradient(135deg,#ffffff 30%,#d4af37 80%)",
-            WebkitBackgroundClip:"text",
-            WebkitTextFillColor:"transparent",
-            letterSpacing:1,
-            direction:"rtl",
-          }}>جدول مباريات كأس العالم</h1>
-
-          <p style={{
-            margin:"6px 0 0",
-            color:"rgba(255,255,255,0.45)",
-            fontSize:12,
-            letterSpacing:2,
-            direction:"rtl",
-          }}>جميع المواعيد بالتوقيت السعودي · AST (UTC+3)</p>
-
-          {/* KSA legend */}
-          <div style={{
-            display:"inline-flex",alignItems:"center",gap:6,
-            marginTop:10,
-            background:"rgba(74,222,128,0.1)",
-            border:"1px solid rgba(74,222,128,0.3)",
-            borderRadius:20,
-            padding:"4px 14px",
-            fontSize:11,
-            color:"#4ade80",
-            direction:"rtl",
-          }}>
-            <span>🇸🇦</span>
-            <span>مباريات المنتخب السعودي مميزة باللون الأخضر</span>
-          </div>
-        </div>
-
-        {/* ── TAB SWITCHER ── */}
-        <div style={{
-          display:"flex",
-          gap:8,
-          justifyContent:"center",
-          marginBottom:20,
-          direction:"rtl",
-        }}>
-          {ROUNDS.map(r => (
-            <button
-              key={r.id}
-              onClick={() => setActiveRound(r.id)}
-              style={{
-                padding:"10px 20px",
-                borderRadius:10,
-                border: activeRound===r.id ? "1px solid rgba(212,175,55,0.6)" : "1px solid rgba(255,255,255,0.1)",
-                background: activeRound===r.id
-                  ? "linear-gradient(135deg,rgba(212,175,55,0.25),rgba(212,175,55,0.1))"
-                  : "rgba(255,255,255,0.04)",
-                color: activeRound===r.id ? "#d4af37" : "rgba(255,255,255,0.5)",
-                cursor:"pointer",
-                fontSize:13,
-                fontWeight: activeRound===r.id ? 700 : 400,
-                transition:"all 0.2s",
-                outline:"none",
-              }}
-            >
-              <div style={{direction:"rtl"}}>{r.label}</div>
-              <div style={{fontSize:10,marginTop:2,opacity:0.7,direction:"rtl"}}>{r.dates}</div>
-            </button>
-          ))}
-        </div>
-
-        {/* ── ROUND CARD ── */}
-        <div style={{
-          background:"rgba(255,255,255,0.03)",
-          border:"1px solid rgba(255,255,255,0.08)",
-          borderRadius:14,
-          overflow:"hidden",
-          backdropFilter:"blur(10px)",
-        }}>
-          {/* Card header */}
-          <div style={{
-            padding:"14px 18px",
-            background:"linear-gradient(90deg,rgba(0,80,0,0.4),rgba(212,175,55,0.1))",
-            borderBottom:"1px solid rgba(255,255,255,0.07)",
-            display:"flex",
-            alignItems:"center",
-            justifyContent:"space-between",
-            direction:"rtl",
-          }}>
-            <div>
-              <span style={{fontSize:16,fontWeight:700,color:"#ffffff"}}>{round.label}</span>
-              <span style={{marginRight:10,fontSize:12,color:"rgba(212,175,55,0.8)"}}>
-                {round.dates}
-              </span>
-            </div>
-            <div style={{
-              background:"rgba(212,175,55,0.15)",
-              border:"1px solid rgba(212,175,55,0.3)",
-              borderRadius:20,
-              padding:"3px 12px",
-              fontSize:11,
-              color:"#d4af37",
-            }}>{round.data.length} مباراة</div>
-          </div>
-
-          {/* Table */}
-          <div style={{padding:"12px 8px"}}>
-            <TableHeader />
-            {round.data.map((m,i) => <MatchRow key={i} m={m} idx={i} />)}
-          </div>
-        </div>
-
-        {/* ── FOOTER ── */}
-        <div style={{
-          textAlign:"center",
-          marginTop:16,
-          fontSize:10,
-          color:"rgba(255,255,255,0.2)",
-          letterSpacing:1,
-        }}>
-          المصدر: kickoffclock.com · FIFA World Cup 2026 · التوقيت السعودي AST UTC+3
-        </div>
+    <div class="header">
+      <div class="badge">FIFA WORLD CUP 2026</div>
+      <h1 class="title">جدول مباريات كأس العالم</h1>
+      <p class="subtitle">جميع المواعيد بالتوقيت السعودي · AST (UTC+3)</p>
+      
+      <div class="ksa-legend">
+        <span>🇸🇦</span>
+        <span>مباريات المنتخب السعودي مميزة باللون الأخضر</span>
       </div>
     </div>
-  );
-}
+
+    <div class="tabs-container">
+      <button 
+        v-for="r in ROUNDS" 
+        :key="r.id"
+        @click="activeRound = r.id"
+        :class="['tab-button', { active: activeRound === r.id }]"
+      >
+        <div>{{ r.label }}</div>
+        <div class="tab-dates">{{ r.dates }}</div>
+      </button>
+    </div>
+
+    <div class="round-card" v-if="currentRound">
+      <div class="card-header">
+        <div>
+          <span class="card-title">{{ currentRound.label }}</span>
+          <span class="card-dates">{{ currentRound.dates }}</span>
+        </div>
+        <div class="match-count">{{ currentRound.data.length }} مباراة</div>
+      </div>
+
+      <div class="table-body">
+        <div class="grid-row table-header">
+          <div class="th-cell text-center">م</div>
+          <div class="th-cell text-right">الفريق الأول</div>
+          <div class="th-cell text-center">النتيجة</div>
+          <div class="th-cell text-left">الفريق الثاني</div>
+          <div class="th-cell text-center">التاريخ</div>
+          <div class="th-cell text-center">الوقت</div>
+        </div>
+
+        <div 
+          v-for="(m, idx) in currentRound.data" 
+          :key="idx"
+          :class="['grid-row', 'match-row', m.ksa ? 'ksa-row' : (idx % 2 === 0 ? 'even-row' : 'odd-row')]"
+        >
+          <div v-if="m.ksa" class="ksa-overlay"></div>
+
+          <div class="cell-group">{{ m.g }}</div>
+
+          <div :class="['cell-t1', { 'font-bold': m.ksa }]">{{ m.t1 }}</div>
+
+          <div :class="['cell-score', { done: m.done }]">{{ m.score }}</div>
+
+          <div :class="['cell-t2', { 'font-bold': m.ksa }]">{{ m.t2 }}</div>
+
+          <div class="cell-date">{{ m.date }}</div>
+
+          <div :class="['cell-time', { 'ksa-time': m.ksa }]">{{ m.time }}</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="footer">
+      المصدر: kickoffclock.com · FIFA World Cup 2026 · التوقيت السعودي AST UTC+3
+    </div>
+
+  </div>
+
+  <script>
+    // بيانات الجولات والمباريات
+    const round1 = [
+      { g:"A", t1:"🇲🇽 المكسيك",       score:"2 - 0", t2:"جنوب أفريقيا 🇿🇦", date:"الخميس 11 يونيو",  time:"10:00 م", ksa:false, done:true  },
+      { g:"A", t1:"🇰🇷 كوريا الجنوبية",score:"2 - 1", t2:"تشيكيا 🇨🇿",        date:"الجمعة 12 يونيو",  time:"05:00 ص", ksa:false, done:true  },
+      { g:"B", t1:"🇨🇦 كندا",           score:"vs",    t2:"البوسنة 🇧🇦",        date:"الجمعة 12 يونيو",  time:"10:00 م", ksa:false, done:false },
+      { g:"D", t1:"🇺🇸 أمريكا",         score:"vs",    t2:"باراغواي 🇵🇾",       date:"السبت 13 يونيو",   time:"04:00 ص", ksa:false, done:false },
+      { g:"B", t1:"🇶🇦 قطر",            score:"vs",    t2:"سويسرا 🇨🇭",         date:"السبت 13 يونيو",   time:"10:00 م", ksa:false, done:false },
+      { g:"C", t1:"🇧🇷 البرازيل",       score:"vs",    t2:"المغرب 🇲🇦",         date:"الأحد 14 يونيو",   time:"01:00 ص", ksa:false, done:false },
+      { g:"C", t1:"🇭🇹 هايتي",          score:"vs",    t2:"اسكتلندا 🏴󠁧󠁢󠁳󠁣󠁴󠁿",     date:"الأحد 14 يونيو",   time:"04:00 ص", ksa:false, done:false },
+      { g:"D", t1:"🇦🇺 أستراليا",       score:"vs",    t2:"تركيا 🇹🇷",          date:"الأحد 14 يونيو",   time:"07:00 م", ksa:false, done:false },
+      { g:"E", t1:"🇩🇪 ألمانيا",        score:"vs",    t2:"كوراساو 🇨🇼",        date:"الأحد 14 يونيو",   time:"08:00 م", ksa:false, done:false },
+      { g:"F", t1:"🇳🇱 هولندا",         score:"vs",    t2:"اليابان 🇯🇵",        date:"الأحد 14 يونيو",   time:"11:00 م", ksa:false, done:false },
+      { g:"E", t1:"🇨🇮 كوت ديفوار",    score:"vs",    t2:"الإكوادور 🇪🇨",      date:"الاثنين 15 يونيو", time:"02:00 ص", ksa:false, done:false },
+      { g:"F", t1:"🇸🇪 السويد",         score:"vs",    t2:"تونس 🇹🇳",           date:"الاثنين 15 يونيو", time:"05:00 ص", ksa:false, done:false },
+      { g:"H", t1:"🇪🇸 إسبانيا",        score:"vs",    t2:"الرأس الأخضر 🇨🇻",  date:"الاثنين 15 يونيو", time:"07:00 م", ksa:false, done:false },
+      { g:"G", t1:"🇧🇪 بلجيكا",         score:"vs",    t2:"مصر 🇪🇬",            date:"الاثنين 15 يونيو", time:"10:00 م", ksa:false, done:false },
+      { g:"H", t1:"🇸🇦 السعودية",       score:"vs",    t2:"أوروغواي 🇺🇾",       date:"الثلاثاء 16 يونيو",time:"01:00 ص", ksa:true,  done:false },
+      { g:"G", t1:"🇮🇷 إيران",          score:"vs",    t2:"نيوزيلندا 🇳🇿",      date:"الثلاثاء 16 يونيو",time:"04:00 ص", ksa:false, done:false },
+      { g:"J", t1:"🇦🇹 النمسا",         score:"vs",    t2:"الأردن 🇯🇴",         date:"الثلاثاء 16 يونيو",time:"07:00 م", ksa:false, done:false },
+      { g:"I", t1:"🇫🇷 فرنسا",          score:"vs",    t2:"السنغال 🇸🇳",        date:"الثلاثاء 16 يونيو",time:"10:00 م", ksa:false, done:false },
+      { g:"I", t1:"🇮🇶 العراق",         score:"vs",    t2:"النرويج 🇳🇴",        date:"الأربعاء 17 يونيو",time:"01:00 ص", ksa:false, done:false },
+      { g:"J", t1:"🇦🇷 الأرجنتين",      score:"vs",    t2:"الجزائر 🇩🇿",        date:"الأربعاء 17 يونيو",time:"04:00 ص", ksa:false, done:false },
+      { g:"K", t1:"🇵🇹 البرتغال",       score:"vs",    t2:"الكونغو 🇨🇩",        date:"الأربعاء 17 يونيو",time:"08:00 م", ksa:false, done:false },
+      { g:"L", t1:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 إنجلترا",      score:"vs",    t2:"كرواتيا 🇭🇷",        date:"الأربعاء 17 يونيو",time:"11:00 م", ksa:false, done:false },
+      { g:"L", t1:"🇬🇭 غانا",           score:"vs",    t2:"بنما 🇵🇦",           date:"الخميس 18 يونيو",  time:"02:00 ص", ksa:false, done:false },
+      { g:"K", t1:"🇺🇿 أوزبكستان",      score:"vs",    t2:"كولومبيا 🇨🇴",       date:"الخميس 18 يونيو",  time:"05:00 ص", ksa:false, done:false },
+    ];
+
+    const round2 = [
+      { g:"A", t1:"🇨🇿 تشيكيا",         score:"vs", t2:"جنوب أفريقيا 🇿🇦",  date:"الخميس 18 يونيو",   time:"07:00 م", ksa:false },
+      { g:"B", t1:"🇨🇭 سويسرا",          score:"vs", t2:"البوسنة 🇧🇦",        date:"الخميس 18 يونيو",   time:"10:00 م", ksa:false },
+      { g:"B", t1:"🇨🇦 كندا",            score:"vs", t2:"قطر 🇶🇦",            date:"الجمعة 19 يونيو",   time:"01:00 ص", ksa:false },
+      { g:"A", t1:"🇲🇽 المكسيك",         score:"vs", t2:"كوريا الجنوبية 🇰🇷", date:"الجمعة 19 يونيو",   time:"04:00 ص", ksa:false },
+      { g:"D", t1:"🇺🇸 أمريكا",          score:"vs", t2:"أستراليا 🇦🇺",       date:"الجمعة 19 يونيو",   time:"10:00 م", ksa:false },
+      { g:"C", t1:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 اسكتلندا",     score:"vs", t2:"المغرب 🇲🇦",         date:"السبت 20 يونيو",    time:"01:00 ص", ksa:false },
+      { g:"C", t1:"🇧🇷 البرازيل",         score:"vs", t2:"هايتي 🇭🇹",          date:"السبت 20 يونيو",    time:"04:00 ص", ksa:false },
+      { g:"E", t1:"🇨🇼 كوراساو",          score:"vs", t2:"كوت ديفوار 🇨🇮",     date:"السبت 20 يونيو",    time:"08:00 م", ksa:false },
+      { g:"F", t1:"🇯🇵 اليابان",          score:"vs", t2:"السويد 🇸🇪",         date:"السبت 20 يونيو",    time:"11:00 م", ksa:false },
+      { g:"D", t1:"🇹🇷 تركيا",            score:"vs", t2:"باراغواي 🇵🇾",       date:"الأحد 21 يونيو",    time:"01:00 ص", ksa:false },
+      { g:"E", t1:"🇩🇪 ألمانيا",          score:"vs", t2:"الإكوادور 🇪🇨",      date:"الأحد 21 يونيو",    time:"02:00 ص", ksa:false },
+      { g:"F", t1:"🇹🇳 تونس",             score:"vs", t2:"هولندا 🇳🇱",         date:"الأحد 21 يونيو",    time:"05:00 ص", ksa:false },
+      { g:"H", t1:"🇪🇸 إسبانيا",          score:"vs", t2:"السعودية 🇸🇦",       date:"الأحد 21 يونيو",    time:"07:00 م", ksa:true  },
+      { g:"G", t1:"🇧🇪 بلجيكا",           score:"vs", t2:"إيران 🇮🇷",          date:"الأحد 21 يونيو",    time:"10:00 م", ksa:false },
+      { g:"H", t1:"🇺🇾 أوروغواي",         score:"vs", t2:"الرأس الأخضر 🇨🇻",  date:"الاثنين 22 يونيو",  time:"01:00 ص", ksa:false },
+      { g:"G", t1:"🇳🇿 نيوزيلندا",        score:"vs", t2:"مصر 🇪🇬",            date:"الاثنين 22 يونيو",  time:"04:00 ص", ksa:false },
+      { g:"J", t1:"🇦🇷 الأرجنتين",        score:"vs", t2:"النمسا 🇦🇹",         date:"الاثنين 22 يونيو",  time:"08:00 م", ksa:false },
+      { g:"I", t1:"🇫🇷 فرنسا",            score:"vs", t2:"العراق 🇮🇶",         date:"الاثنين 22 يونيو",  time:"11:00 م", ksa:false },
+      { g:"J", t1:"🇯🇴 الأردن",           score:"vs", t2:"الجزائر 🇩🇿",        date:"الثلاثاء 23 يونيو", time:"02:00 ص", ksa:false },
+      { g:"I", t1:"🇳🇴 النرويج",          score:"vs", t2:"السنغال 🇸🇳",        date:"الثلاثاء 23 يونيو", time:"05:00 ص", ksa:false },
+      { g:"K", t1:"🇵🇹 البرتغال",         score:"vs", t2:"أوزبكستان 🇺🇿",      date:"الثلاثاء 23 يونيو", time:"08:00 م", ksa:false },
+      { g:"L", t1:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 إنجلترا",      score:"vs", t2:"غانا 🇬🇭",           date:"الثلاثاء 23 يونيو", time:"11:00 م", ksa:false },
+      { g:"L", t1:"🇵🇦 بنما",             score:"vs", t2:"كرواتيا 🇭🇷",        date:"الأربعاء 24 يونيو", time:"02:00 ص", ksa:false },
+      { g:"K", t1:"🇨🇩 الكونغو",          score:"vs", t2:"كولومبيا 🇨🇴",       date:"الأربعاء 24 يونيو", time:"05:00 ص", ksa:false },
+    ];
+
+    const round3 = [
+      { g:"A", t1:"🇿🇦 جنوب أفريقيا",  score:"vs", t2:"كوريا الجنوبية 🇰🇷", date:"الأربعاء 24 يونيو", time:"07:00 م", ksa:false },
+      { g:"A", t1:"🇨🇿 تشيكيا",         score:"vs", t2:"المكسيك 🇲🇽",         date:"الأربعاء 24 يونيو", time:"07:00 م", ksa:false },
+      { g:"B", t1:"🇶🇦 قطر",            score:"vs", t2:"البوسنة 🇧🇦",         date:"الخميس 25 يونيو",  time:"12:00 ص", ksa:false },
+      { g:"B", t1:"🇨🇭 سويسرا",          score:"vs", t2:"كندا 🇨🇦",            date:"الخميس 25 يونيو",  time:"12:00 ص", ksa:false },
+      { g:"C", t1:"🇭🇹 هايتي",           score:"vs", t2:"البرازيل 🇧🇷",        date:"الخميس 25 يونيو",  time:"07:00 م", ksa:false },
+      { g:"C", t1:"🇲🇦 المغرب",          score:"vs", t2:"اسكتلندا 🏴󠁧󠁢󠁳󠁣󠁴󠁿",     date:"الخميس 25 يونيو",  time:"07:00 م", ksa:false },
+      { g:"D", t1:"🇵🇾 باراغواي",        score:"vs", t2:"أستراليا 🇦🇺",        date:"الجمعة 26 يونيو",  time:"12:00 ص", ksa:false },
+      { g:"D", t1:"🇹🇷 تركيا",           score:"vs", t2:"أمريكا 🇺🇸",          date:"الجمعة 26 يونيو",  time:"12:00 ص", ksa:false },
+      { g:"E", t1:"🇪🇨 الإكوادور",       score:"vs", t2:"كوراساو 🇨🇼",         date:"الجمعة 26 يونيو",  time:"07:00 م", ksa:false },
+      { g:"E", t1:"🇨🇮 كوت ديفوار",     score:"vs", t2:"ألمانيا 🇩🇪",         date:"الجمعة 26 يونيو",  time:"07:00 م", ksa:false },
+      { g:"F", t1:"🇸🇪 السويد",          score:"vs", t2:"هولندا 🇳🇱",          date:"السبت 27 يونيو",   time:"12:00 ص", ksa:false },
+      { g:"F", t1:"🇯🇵 اليابان",          score:"vs", t2:"تونس 🇹🇳",            date:"السبت 27 يونيو",   time:"12:00 ص", ksa:false },
+      { g:"G", t1:"🇪🇬 مصر",             score:"vs", t2:"إيران 🇮🇷",           date:"السبت 27 يونيو",   time:"07:00 م", ksa:false },
+      { g:"G", t1:"🇳🇿 نيوزيلندا",       score:"vs", t2:"بلجيكا 🇧🇪",          date:"السبت 27 يونيو",   time:"07:00 م", ksa:false },
+      { g:"H", t1:"🇨🇻 الرأس الأخضر",   score:"vs", t2:"السعودية 🇸🇦",        date:"الأحد 28 يونيو",   time:"12:00 ص", ksa:true  },
+      { g:"H", t1:"🇺🇾 أوروغواي",        score:"vs", t2:"إسبانيا 🇪🇸",         date:"الأحد 28 يونيو",   time:"12:00 ص", ksa:false },
+      { g:"I", t1:"🇸🇳 السنغال",         score:"vs", t2:"العراق 🇮🇶",          date:"الأحد 28 يونيو",   time:"07:00 م", ksa:false },
+      { g:"I", t1:"🇳🇴 النرويج",         score:"vs", t2:"فرنسان 🇫🇷",           date:"الأحد 28 يونيو",   time:"07:00 م", ksa:false },
+      { g:"J", t1:"🇩🇿 الجزائر",         score:"vs", t2:"النمسا 🇦🇹",          date:"الاثنين 29 يونيو", time:"12:00 ص", ksa:false },
+      { g:"J", t1:"🇯🇴 الأردن",          score:"vs", t2:"الأرجنتين 🇦🇷",       date:"الاثنين 29 يونيو", time:"12:00 ص", ksa:false },
+      { g:"K", t1:"🇨🇴 كولومبيا",        score:"vs", t2:"البرتغال 🇵🇹",        date:"الاثنين 29 يونيو", time:"07:00 م", ksa:false },
+      { g:"K", t1:"🇨🇩 الكونغو",         score:"vs", t2:"أوزبكستان 🇺🇿",       date:"الاثنين 29 يونيو", time:"07:00 م", ksa:false },
+      { g:"L", t1:"🇭🇷 كرواتيا",         score:"vs", t2:"غانا 🇬🇭",            date:"الثلاثاء 30 يونيو",time:"12:00 ص", ksa:false },
+      { g:"L", t1:"🇵🇦 بنما",            score:"vs", t2:"إنجلترا 🏴󠁧󠁢󠁥󠁮󠁧󠁿",      date:"الثلاثاء 30 يونيو",time:"12:00 ص", ksa:false },
+    ];
+
+    const ROUNDS = [
+      { id: 1, label: "الجولة الأولى", dates: "11 – 18 يونيو", data: round1 },
+      { id: 2, label: "الجولة الثانية", dates: "18 – 24 يونيو", data: round2 },
+      { id: 3, label: "الجولة الثالثة", dates: "24 – 30 يونيو", data: round3 },
+    ];
+
+    // تشغيل تطبيق Vue
+    const { createApp, ref, computed } = Vue;
+    createApp({
+      setup() {
+        const activeRound = ref(1);
+        
+        const currentRound = computed(() => {
+          return ROUNDS.find(r => r.id === activeRound.value);
+        });
+
+        return {
+          ROUNDS,
+          activeRound,
+          currentRound
+        };
+      }
+    }).mount('#app');
+
+    // ─── CANVAS BACKDROP ANIMATION ─────────────────────────────────────
+    (function initStarfield() {
+      const canvas = document.getElementById("starfield");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      let raf;
+
+      const resize = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      };
+      resize();
+      window.addEventListener("resize", resize);
+
+      const particles = Array.from({ length: 80 }, () => ({
+        x: Math.random(),
+        y: Math.random(),
+        r: Math.random() * 1.5 + 0.3,
+        speed: Math.random() * 0.0002 + 0.00005,
+        alpha: Math.random() * 0.5 + 0.2,
+        phase: Math.random() * Math.PI * 2,
+      }));
+
+      const draw = (t) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          const a = p.alpha * (0.6 + 0.4 * Math.sin(t * 0.001 + p.phase));
+          ctx.beginPath();
+          ctx.arc(p.x * canvas.width, p.y * canvas.height, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 215, 100, ${a})`;
+          ctx.fill();
+        });
+        raf = requestAnimationFrame(draw);
+      };
+      raf = requestAnimationFrame(draw);
+    })();
+  </script>
+</body>
+</html>
