@@ -100,14 +100,23 @@
   /* ── TABS ── */
   .tabs {
     display: flex;
-    justify-content: center;
-    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
     margin-bottom: 22px;
-    flex-wrap: wrap;
+  }
+
+  .tabs-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
   }
 
   .tab-btn {
-    padding: 11px 24px;
+    flex: 1;
+    max-width: 200px;
+    padding: 10px 14px;
     border-radius: 12px;
     border: 1px solid rgba(255,255,255,0.1);
     background: rgba(255,255,255,0.04);
@@ -117,6 +126,7 @@
     font-size: 13px;
     transition: all 0.22s;
     outline: none;
+    text-align: center;
   }
 
   .tab-btn:hover {
@@ -129,6 +139,10 @@
     border-color: rgba(212,175,55,0.65);
     color: #d4af37;
     font-weight: 700;
+  }
+
+  .tab-btn.eilan-tab {
+    max-width: 260px;
   }
 
   .tab-dates {
@@ -427,19 +441,21 @@
 
   <!-- TABS -->
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab(1)">
-      الجولة الأولى
-      <div class="tab-dates">11 – 18 يونيو</div>
-    </button>
-    <button class="tab-btn" onclick="switchTab(2)">
-      الجولة الثانية
-      <div class="tab-dates">18 – 24 يونيو</div>
-    </button>
-    <button class="tab-btn" onclick="switchTab(3)">
-      الجولة الثالثة
-      <div class="tab-dates">24 – 30 يونيو</div>
-    </button>
-    <button class="tab-btn eilan-tab" onclick="switchTab(4)">
+    <div class="tabs-row">
+      <button class="tab-btn active" data-tab="1" onclick="switchTab(1)">
+        الجولة الأولى
+        <div class="tab-dates">11 – 18 يونيو</div>
+      </button>
+      <button class="tab-btn" data-tab="2" onclick="switchTab(2)">
+        الجولة الثانية
+        <div class="tab-dates">18 – 24 يونيو</div>
+      </button>
+      <button class="tab-btn" data-tab="3" onclick="switchTab(3)">
+        الجولة الثالثة
+        <div class="tab-dates">24 – 30 يونيو</div>
+      </button>
+    </div>
+    <button class="tab-btn eilan-tab" data-tab="4" onclick="switchTab(4)">
       🏆 إيلان كأس العالم
       <div class="tab-dates">بطولة خاصة</div>
     </button>
@@ -486,32 +502,6 @@
 <div class="match-row even"><div class="grp-badge">L</div><div class="team1">🇬🇭 غانا</div><div class="score vs">vs</div><div class="team2">بنما 🇵🇦</div><div class="match-date">الخميس 18 يونيو</div><div class="match-time">02:00 ص</div></div>
 <div class="match-row"><div class="grp-badge">K</div><div class="team1">🇺🇿 أوزبكستان</div><div class="score vs">vs</div><div class="team2">كولومبيا 🇨🇴</div><div class="match-date">الخميس 18 يونيو</div><div class="match-time">05:00 ص</div></div>
     </div>
-      </div>
-      <div class="match-row">        <div class="grp-badge">A</div><div class="team1">🇲🇽 المكسيك</div><div class="score done">2 - 0</div><div class="team2">جنوب أفريقيا 🇿🇦</div><div class="match-date">الخميس 11 يونيو</div><div class="match-time">10:00 م</div></div>
-      <div class="match-row">        <div class="grp-badge">A</div><div class="team1">🇰🇷 كوريا الجنوبية</div><div class="score done">2 - 1</div><div class="team2">تشيكيا 🇨🇿</div><div class="match-date">الجمعة 12 يونيو</div><div class="match-time">05:00 ص</div></div>
-      <div class="match-row">        <div class="grp-badge">B</div><div class="team1">🇨🇦 كندا</div><div class="score vs">vs</div><div class="team2">البوسنة 🇧🇦</div><div class="match-date">الجمعة 12 يونيو</div><div class="match-time">10:00 م</div></div>
-      <div class="match-row">        <div class="grp-badge">D</div><div class="team1">🇺🇸 أمريكا</div><div class="score vs">vs</div><div class="team2">باراغواي 🇵🇾</div><div class="match-date">السبت 13 يونيو</div><div class="match-time">04:00 ص</div></div>
-      <div class="match-row">        <div class="grp-badge">B</div><div class="team1">🇶🇦 قطر</div><div class="score vs">vs</div><div class="team2">سويسرا 🇨🇭</div><div class="match-date">السبت 13 يونيو</div><div class="match-time">10:00 م</div></div>
-      <div class="match-row">        <div class="grp-badge">C</div><div class="team1">🇧🇷 البرازيل</div><div class="score vs">vs</div><div class="team2">المغرب 🇲🇦</div><div class="match-date">الأحد 14 يونيو</div><div class="match-time">01:00 ص</div></div>
-      <div class="match-row">        <div class="grp-badge">C</div><div class="team1">🇭🇹 هايتي</div><div class="score vs">vs</div><div class="team2">اسكتلندا 🏴󠁧󠁢󠁳󠁣󠁴󠁿</div><div class="match-date">الأحد 14 يونيو</div><div class="match-time">04:00 ص</div></div>
-      <div class="match-row">        <div class="grp-badge">D</div><div class="team1">🇦🇺 أستراليا</div><div class="score vs">vs</div><div class="team2">تركيا 🇹🇷</div><div class="match-date">الأحد 14 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row">        <div class="grp-badge">E</div><div class="team1">🇩🇪 ألمانيا</div><div class="score vs">vs</div><div class="team2">كوراساو 🇨🇼</div><div class="match-date">الأحد 14 يونيو</div><div class="match-time">08:00 م</div></div>
-      <div class="match-row">        <div class="grp-badge">F</div><div class="team1">🇳🇱 هولندا</div><div class="score vs">vs</div><div class="team2">اليابان 🇯🇵</div><div class="match-date">الأحد 14 يونيو</div><div class="match-time">11:00 م</div></div>
-      <div class="match-row">        <div class="grp-badge">E</div><div class="team1">🇨🇮 كوت ديفوار</div><div class="score vs">vs</div><div class="team2">الإكوادور 🇪🇨</div><div class="match-date">الاثنين 15 يونيو</div><div class="match-time">02:00 ص</div></div>
-      <div class="match-row">        <div class="grp-badge">F</div><div class="team1">🇸🇪 السويد</div><div class="score vs">vs</div><div class="team2">تونس 🇹🇳</div><div class="match-date">الاثنين 15 يونيو</div><div class="match-time">05:00 ص</div></div>
-      <div class="match-row">        <div class="grp-badge">H</div><div class="team1">🇪🇸 إسبانيا</div><div class="score vs">vs</div><div class="team2">الرأس الأخضر 🇨🇻</div><div class="match-date">الاثنين 15 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row">        <div class="grp-badge">G</div><div class="team1">🇧🇪 بلجيكا</div><div class="score vs">vs</div><div class="team2">مصر 🇪🇬</div><div class="match-date">الاثنين 15 يونيو</div><div class="match-time">10:00 م</div></div>
-      <div class="match-row ksa">    <div class="grp-badge">H</div><div class="team1">🇸🇦 السعودية</div><div class="score vs">vs</div><div class="team2">أوروغواي 🇺🇾</div><div class="match-date">الثلاثاء 16 يونيو</div><div class="match-time">01:00 ص</div></div>
-      <div class="match-row">        <div class="grp-badge">G</div><div class="team1">🇮🇷 إيران</div><div class="score vs">vs</div><div class="team2">نيوزيلندا 🇳🇿</div><div class="match-date">الثلاثاء 16 يونيو</div><div class="match-time">04:00 ص</div></div>
-      <div class="match-row">        <div class="grp-badge">J</div><div class="team1">🇦🇹 النمسا</div><div class="score vs">vs</div><div class="team2">الأردن 🇯🇴</div><div class="match-date">الثلاثاء 16 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row">        <div class="grp-badge">I</div><div class="team1">🇫🇷 فرنسا</div><div class="score vs">vs</div><div class="team2">السنغال 🇸🇳</div><div class="match-date">الثلاثاء 16 يونيو</div><div class="match-time">10:00 م</div></div>
-      <div class="match-row">        <div class="grp-badge">I</div><div class="team1">🇮🇶 العراق</div><div class="score vs">vs</div><div class="team2">النرويج 🇳🇴</div><div class="match-date">الأربعاء 17 يونيو</div><div class="match-time">01:00 ص</div></div>
-      <div class="match-row">        <div class="grp-badge">J</div><div class="team1">🇦🇷 الأرجنتين</div><div class="score vs">vs</div><div class="team2">الجزائر 🇩🇿</div><div class="match-date">الأربعاء 17 يونيو</div><div class="match-time">04:00 ص</div></div>
-      <div class="match-row">        <div class="grp-badge">K</div><div class="team1">🇵🇹 البرتغال</div><div class="score vs">vs</div><div class="team2">الكونغو 🇨🇩</div><div class="match-date">الأربعاء 17 يونيو</div><div class="match-time">08:00 م</div></div>
-      <div class="match-row">        <div class="grp-badge">L</div><div class="team1">🏴󠁧󠁢󠁥󠁮󠁧󠁿 إنجلترا</div><div class="score vs">vs</div><div class="team2">كرواتيا 🇭🇷</div><div class="match-date">الأربعاء 17 يونيو</div><div class="match-time">11:00 م</div></div>
-      <div class="match-row">        <div class="grp-badge">L</div><div class="team1">🇬🇭 غانا</div><div class="score vs">vs</div><div class="team2">بنما 🇵🇦</div><div class="match-date">الخميس 18 يونيو</div><div class="match-time">02:00 ص</div></div>
-      <div class="match-row">        <div class="grp-badge">K</div><div class="team1">🇺🇿 أوزبكستان</div><div class="score vs">vs</div><div class="team2">كولومبيا 🇨🇴</div><div class="match-date">الخميس 18 يونيو</div><div class="match-time">05:00 ص</div></div>
-    </div>
   </div>
 
   <!-- ══ ROUND 2 ══ -->
@@ -553,32 +543,6 @@
 <div class="day-divider"><span>الأربعاء 24 يونيو</span></div>
 <div class="match-row even"><div class="grp-badge">L</div><div class="team1">🇵🇦 بنما</div><div class="score vs">vs</div><div class="team2">كرواتيا 🇭🇷</div><div class="match-date">الأربعاء 24 يونيو</div><div class="match-time">02:00 ص</div></div>
 <div class="match-row"><div class="grp-badge">K</div><div class="team1">🇨🇩 الكونغو</div><div class="score vs">vs</div><div class="team2">كولومبيا 🇨🇴</div><div class="match-date">الأربعاء 24 يونيو</div><div class="match-time">05:00 ص</div></div>
-    </div>
-      </div>
-      <div class="match-row"><div class="grp-badge">A</div><div class="team1">🇨🇿 تشيكيا</div><div class="score vs">vs</div><div class="team2">جنوب أفريقيا 🇿🇦</div><div class="match-date">الخميس 18 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">B</div><div class="team1">🇨🇭 سويسرا</div><div class="score vs">vs</div><div class="team2">البوسنة 🇧🇦</div><div class="match-date">الخميس 18 يونيو</div><div class="match-time">10:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">B</div><div class="team1">🇨🇦 كندا</div><div class="score vs">vs</div><div class="team2">قطر 🇶🇦</div><div class="match-date">الجمعة 19 يونيو</div><div class="match-time">01:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">A</div><div class="team1">🇲🇽 المكسيك</div><div class="score vs">vs</div><div class="team2">كوريا الجنوبية 🇰🇷</div><div class="match-date">الجمعة 19 يونيو</div><div class="match-time">04:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">D</div><div class="team1">🇺🇸 أمريكا</div><div class="score vs">vs</div><div class="team2">أستراليا 🇦🇺</div><div class="match-date">الجمعة 19 يونيو</div><div class="match-time">10:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">C</div><div class="team1">🏴󠁧󠁢󠁳󠁣󠁴󠁿 اسكتلندا</div><div class="score vs">vs</div><div class="team2">المغرب 🇲🇦</div><div class="match-date">السبت 20 يونيو</div><div class="match-time">01:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">C</div><div class="team1">🇧🇷 البرازيل</div><div class="score vs">vs</div><div class="team2">هايتي 🇭🇹</div><div class="match-date">السبت 20 يونيو</div><div class="match-time">04:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">E</div><div class="team1">🇨🇼 كوراساو</div><div class="score vs">vs</div><div class="team2">كوت ديفوار 🇨🇮</div><div class="match-date">السبت 20 يونيو</div><div class="match-time">08:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">F</div><div class="team1">🇯🇵 اليابان</div><div class="score vs">vs</div><div class="team2">السويد 🇸🇪</div><div class="match-date">السبت 20 يونيو</div><div class="match-time">11:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">D</div><div class="team1">🇹🇷 تركيا</div><div class="score vs">vs</div><div class="team2">باراغواي 🇵🇾</div><div class="match-date">الأحد 21 يونيو</div><div class="match-time">01:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">E</div><div class="team1">🇩🇪 ألمانيا</div><div class="score vs">vs</div><div class="team2">الإكوادور 🇪🇨</div><div class="match-date">الأحد 21 يونيو</div><div class="match-time">02:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">F</div><div class="team1">🇹🇳 تونس</div><div class="score vs">vs</div><div class="team2">هولندا 🇳🇱</div><div class="match-date">الأحد 21 يونيو</div><div class="match-time">05:00 ص</div></div>
-      <div class="match-row ksa"><div class="grp-badge">H</div><div class="team1">🇪🇸 إسبانيا</div><div class="score vs">vs</div><div class="team2">السعودية 🇸🇦</div><div class="match-date">الأحد 21 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">G</div><div class="team1">🇧🇪 بلجيكا</div><div class="score vs">vs</div><div class="team2">إيران 🇮🇷</div><div class="match-date">الأحد 21 يونيو</div><div class="match-time">10:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">H</div><div class="team1">🇺🇾 أوروغواي</div><div class="score vs">vs</div><div class="team2">الرأس الأخضر 🇨🇻</div><div class="match-date">الاثنين 22 يونيو</div><div class="match-time">01:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">G</div><div class="team1">🇳🇿 نيوزيلندا</div><div class="score vs">vs</div><div class="team2">مصر 🇪🇬</div><div class="match-date">الاثنين 22 يونيو</div><div class="match-time">04:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">J</div><div class="team1">🇦🇷 الأرجنتين</div><div class="score vs">vs</div><div class="team2">النمسا 🇦🇹</div><div class="match-date">الاثنين 22 يونيو</div><div class="match-time">08:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">I</div><div class="team1">🇫🇷 فرنسا</div><div class="score vs">vs</div><div class="team2">العراق 🇮🇶</div><div class="match-date">الاثنين 22 يونيو</div><div class="match-time">11:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">J</div><div class="team1">🇯🇴 الأردن</div><div class="score vs">vs</div><div class="team2">الجزائر 🇩🇿</div><div class="match-date">الثلاثاء 23 يونيو</div><div class="match-time">02:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">I</div><div class="team1">🇳🇴 النرويج</div><div class="score vs">vs</div><div class="team2">السنغال 🇸🇳</div><div class="match-date">الثلاثاء 23 يونيو</div><div class="match-time">05:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">K</div><div class="team1">🇵🇹 البرتغال</div><div class="score vs">vs</div><div class="team2">أوزبكستان 🇺🇿</div><div class="match-date">الثلاثاء 23 يونيو</div><div class="match-time">08:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">L</div><div class="team1">🏴󠁧󠁢󠁥󠁮󠁧󠁿 إنجلترا</div><div class="score vs">vs</div><div class="team2">غانا 🇬🇭</div><div class="match-date">الثلاثاء 23 يونيو</div><div class="match-time">11:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">L</div><div class="team1">🇵🇦 بنما</div><div class="score vs">vs</div><div class="team2">كرواتيا 🇭🇷</div><div class="match-date">الأربعاء 24 يونيو</div><div class="match-time">02:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">K</div><div class="team1">🇨🇩 الكونغو</div><div class="score vs">vs</div><div class="team2">كولومبيا 🇨🇴</div><div class="match-date">الأربعاء 24 يونيو</div><div class="match-time">05:00 ص</div></div>
     </div>
   </div>
 
@@ -622,35 +586,8 @@
 <div class="match-row even"><div class="grp-badge">L</div><div class="team1">🇭🇷 كرواتيا</div><div class="score vs">vs</div><div class="team2">غانا 🇬🇭</div><div class="match-date">الثلاثاء 30 يونيو</div><div class="match-time">12:00 ص</div></div>
 <div class="match-row"><div class="grp-badge">L</div><div class="team1">🇵🇦 بنما</div><div class="score vs">vs</div><div class="team2">إنجلترا 🏴󠁧󠁢󠁥󠁮󠁧󠁿</div><div class="match-date">الثلاثاء 30 يونيو</div><div class="match-time">12:00 ص</div></div>
     </div>
-      </div>
-      <div class="match-row"><div class="grp-badge">A</div><div class="team1">🇿🇦 جنوب أفريقيا</div><div class="score vs">vs</div><div class="team2">كوريا الجنوبية 🇰🇷</div><div class="match-date">الأربعاء 24 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">A</div><div class="team1">🇨🇿 تشيكيا</div><div class="score vs">vs</div><div class="team2">المكسيك 🇲🇽</div><div class="match-date">الأربعاء 24 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">B</div><div class="team1">🇶🇦 قطر</div><div class="score vs">vs</div><div class="team2">البوسنة 🇧🇦</div><div class="match-date">الخميس 25 يونيو</div><div class="match-time">12:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">B</div><div class="team1">🇨🇭 سويسرا</div><div class="score vs">vs</div><div class="team2">كندا 🇨🇦</div><div class="match-date">الخميس 25 يونيو</div><div class="match-time">12:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">C</div><div class="team1">🇭🇹 هايتي</div><div class="score vs">vs</div><div class="team2">البرازيل 🇧🇷</div><div class="match-date">الخميس 25 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">C</div><div class="team1">🇲🇦 المغرب</div><div class="score vs">vs</div><div class="team2">اسكتلندا 🏴󠁧󠁢󠁳󠁣󠁴󠁿</div><div class="match-date">الخميس 25 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">D</div><div class="team1">🇵🇾 باراغواي</div><div class="score vs">vs</div><div class="team2">أستراليا 🇦🇺</div><div class="match-date">الجمعة 26 يونيو</div><div class="match-time">12:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">D</div><div class="team1">🇹🇷 تركيا</div><div class="score vs">vs</div><div class="team2">أمريكا 🇺🇸</div><div class="match-date">الجمعة 26 يونيو</div><div class="match-time">12:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">E</div><div class="team1">🇪🇨 الإكوادور</div><div class="score vs">vs</div><div class="team2">كوراساو 🇨🇼</div><div class="match-date">الجمعة 26 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">E</div><div class="team1">🇨🇮 كوت ديفوار</div><div class="score vs">vs</div><div class="team2">ألمانيا 🇩🇪</div><div class="match-date">الجمعة 26 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">F</div><div class="team1">🇸🇪 السويد</div><div class="score vs">vs</div><div class="team2">هولندا 🇳🇱</div><div class="match-date">السبت 27 يونيو</div><div class="match-time">12:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">F</div><div class="team1">🇯🇵 اليابان</div><div class="score vs">vs</div><div class="team2">تونس 🇹🇳</div><div class="match-date">السبت 27 يونيو</div><div class="match-time">12:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">G</div><div class="team1">🇪🇬 مصر</div><div class="score vs">vs</div><div class="team2">إيران 🇮🇷</div><div class="match-date">السبت 27 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">G</div><div class="team1">🇳🇿 نيوزيلندا</div><div class="score vs">vs</div><div class="team2">بلجيكا 🇧🇪</div><div class="match-date">السبت 27 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row ksa"><div class="grp-badge">H</div><div class="team1">🇨🇻 الرأس الأخضر</div><div class="score vs">vs</div><div class="team2">السعودية 🇸🇦</div><div class="match-date">الأحد 28 يونيو</div><div class="match-time">12:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">H</div><div class="team1">🇺🇾 أوروغواي</div><div class="score vs">vs</div><div class="team2">إسبانيا 🇪🇸</div><div class="match-date">الأحد 28 يونيو</div><div class="match-time">12:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">I</div><div class="team1">🇸🇳 السنغال</div><div class="score vs">vs</div><div class="team2">العراق 🇮🇶</div><div class="match-date">الأحد 28 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">I</div><div class="team1">🇳🇴 النرويج</div><div class="score vs">vs</div><div class="team2">فرنسا 🇫🇷</div><div class="match-date">الأحد 28 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">J</div><div class="team1">🇩🇿 الجزائر</div><div class="score vs">vs</div><div class="team2">النمسا 🇦🇹</div><div class="match-date">الاثنين 29 يونيو</div><div class="match-time">12:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">J</div><div class="team1">🇯🇴 الأردن</div><div class="score vs">vs</div><div class="team2">الأرجنتين 🇦🇷</div><div class="match-date">الاثنين 29 يونيو</div><div class="match-time">12:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">K</div><div class="team1">🇨🇴 كولومبيا</div><div class="score vs">vs</div><div class="team2">البرتغال 🇵🇹</div><div class="match-date">الاثنين 29 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">K</div><div class="team1">🇨🇩 الكونغو</div><div class="score vs">vs</div><div class="team2">أوزبكستان 🇺🇿</div><div class="match-date">الاثنين 29 يونيو</div><div class="match-time">07:00 م</div></div>
-      <div class="match-row"><div class="grp-badge">L</div><div class="team1">🇭🇷 كرواتيا</div><div class="score vs">vs</div><div class="team2">غانا 🇬🇭</div><div class="match-date">الثلاثاء 30 يونيو</div><div class="match-time">12:00 ص</div></div>
-      <div class="match-row"><div class="grp-badge">L</div><div class="team1">🇵🇦 بنما</div><div class="score vs">vs</div><div class="team2">إنجلترا 🏴󠁧󠁢󠁥󠁮󠁧󠁿</div><div class="match-date">الثلاثاء 30 يونيو</div><div class="match-time">12:00 ص</div></div>
-    </div>
   </div>
 
-  
   <!-- ══ ROUND 4: EILAN ══ -->
   <div id="round-4" class="round-panel">
     <div class="card-header">
@@ -767,7 +704,7 @@
     document.querySelectorAll('.round-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('round-' + n).classList.add('active');
-    document.querySelectorAll('.tab-btn')[n - 1].classList.add('active');
+    document.querySelector('.tab-btn[data-tab="' + n + '"]').classList.add('active');
   }
 
   // ── ANIMATED STAR CANVAS ──
